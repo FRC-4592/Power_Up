@@ -49,10 +49,10 @@ public class PID{
 				
 				output = error * Kp;
 				
-				if(output > 0.75){
-					return 0.75;
-				}else if(output < -0.75){
-					return -0.75;
+				if(output > 0.5){
+					return 0.5;
+				}else if(output < -0.5){
+					return -0.5;
 				}
 				
 				return output;

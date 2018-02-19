@@ -7,9 +7,12 @@
 
 package org.usfirst.frc.team4592.robot;
 
+import org.usfirst.frc.team4592.robot.Lib.Loop.MultiLooper;
+import org.usfirst.frc.team4592.robot.Subsystems.Elevator;
+import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation;
+import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawWheels;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,39 +22,51 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	// Loopers
+	private MultiLooper DriveLooper = new MultiLooper("DriveLooper", 1 / 200.0, false); // Drivetrain looper
+	private MultiLooper SSLooper = new MultiLooper("SSLooper", 1 / 200.0, false); // Subsystems looper
+	private MultiLooper AutoLooper = new MultiLooper("AutoLooper", 1 / 200.0, false); // Auto looper
 
+	// Subsystems
+	/*private Drivetrain myDrive = new Drivetrain(Hardware.rightMasterMotor, Hardware.rightSlaveMotor,
+			Hardware.rightSlaveMotor2, Hardware.leftMasterMotor, Hardware.leftSlaveMotor, Hardware.leftSlaveMotor2,
+			Hardware.shifter);*/
+
+	//private ClawWheels clawWheels = new ClawWheels(Hardware.clawRightMotor, Hardware.clawLeftMotor);
+	/*private Elevator elevator = new Elevator(Hardware.elevatorMotor, Constants.Average_Ticks_Per_Inch,
+												Constants.Elevator_Kp, Constants.Elevator_Ki);*/
+	private ClawRotation clawRotation = new ClawRotation (Hardware.clawRotationMotor, Constants.Average_Ticks_Per_Degree,
+															Constants.Claw_Rotation_Kp, Constants.Claw_Rotation_Ki);
 	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
+	 * This function is run when the robot is first started up and should be used
+	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
+		//myDrive.setupSensors();
+		clawRotation.setupSensors();
+
+		//DriveLooper.addLoopable(myDrive);
+		//SSLooper.addLoopable(clawWheels);
+		//SSLooper.addLoopable(elevator);
+		SSLooper.addLoopable(clawRotation);
 	}
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
+	 * between different autonomous modes using the dashboard. The sendable chooser
+	 * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+	 * remove all of the chooser code and uncomment the getString line to get the
+	 * auto name from the text box below the Gyro
 	 *
-	 * <p>You can add additional auto modes by adding additional comparisons to
-	 * the switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
+	 * <p>
+	 * You can add additional auto modes by adding additional comparisons to the
+	 * switch structure below with additional strings. If using the SendableChooser
+	 * make sure to add them to the chooser code above as well.
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
+
 	}
 
 	/**
@@ -59,15 +74,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
+
+	}
+
+	public void teleopInit() {
+		//DriveLooper.start();
+		//DriveLooper.update();
+		SSLooper.start();
+		SSLooper.update();
 	}
 
 	/**
