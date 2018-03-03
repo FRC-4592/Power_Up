@@ -8,6 +8,8 @@
 package org.usfirst.frc.team4592.robot;
 
 import org.usfirst.frc.team4592.robot.Lib.Loop.MultiLooper;
+import org.usfirst.frc.team4592.robot.Subsystems.Climber;
+import org.usfirst.frc.team4592.robot.Subsystems.Drivetrain;
 import org.usfirst.frc.team4592.robot.Subsystems.Elevator;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawWheels;
@@ -28,28 +30,37 @@ public class Robot extends IterativeRobot {
 	private MultiLooper AutoLooper = new MultiLooper("AutoLooper", 1 / 200.0, false); // Auto looper
 
 	// Subsystems
-	/*private Drivetrain myDrive = new Drivetrain(Hardware.rightMasterMotor, Hardware.rightSlaveMotor,
+	private Drivetrain myDrive = new Drivetrain(Hardware.rightMasterMotor, Hardware.rightSlaveMotor,
 			Hardware.rightSlaveMotor2, Hardware.leftMasterMotor, Hardware.leftSlaveMotor, Hardware.leftSlaveMotor2,
-			Hardware.shifter);*/
-
-	//private ClawWheels clawWheels = new ClawWheels(Hardware.clawRightMotor, Hardware.clawLeftMotor);
-	/*private Elevator elevator = new Elevator(Hardware.elevatorMotor, Constants.Average_Ticks_Per_Inch,
-												Constants.Elevator_Kp, Constants.Elevator_Ki);*/
+			Hardware.shifter);
+	private ClawWheels clawWheels = new ClawWheels(Hardware.clawRightMotor, Hardware.clawLeftMotor);
+	private Elevator elevator = new Elevator(Hardware.elevatorMotor, Constants.Average_Ticks_Per_Inch,
+											Constants.Elevator_Kf, Constants.Elevator_Kp, 
+											Constants.Elevator_Ki, Constants.Elevator_Kd);
 	private ClawRotation clawRotation = new ClawRotation (Hardware.clawRotationMotor, Constants.Average_Ticks_Per_Degree,
-															Constants.Claw_Rotation_Kp, Constants.Claw_Rotation_Ki);
+														Constants.Claw_Rotation_Kf, Constants.Claw_Rotation_Kp,
+														Constants.Claw_Rotation_Ki, Constants.Claw_Rotation_Kd);
+	private Climber climber = new Climber(Hardware.rightClimberMotor, Hardware.rightClimberMotor2,
+										Hardware.leftClimberMotor, Hardware.leftClimberMotor2);
+	
+	//private DigitalInput limitSwitch;
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-		//myDrive.setupSensors();
+		myDrive.setupSensors();
 		clawRotation.setupSensors();
-
-		//DriveLooper.addLoopable(myDrive);
-		//SSLooper.addLoopable(clawWheels);
-		//SSLooper.addLoopable(elevator);
+		elevator.setupSensors();
+		
+		DriveLooper.addLoopable(myDrive);
+		SSLooper.addLoopable(clawWheels);
+		SSLooper.addLoopable(elevator);
 		SSLooper.addLoopable(clawRotation);
+		SSLooper.addLoopable(climber);
+		
+		//limitSwitch = new DigitalInput(0);
 	}
 
 	/**
@@ -78,8 +89,8 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void teleopInit() {
-		//DriveLooper.start();
-		//DriveLooper.update();
+		DriveLooper.start();
+		DriveLooper.update();
 		SSLooper.start();
 		SSLooper.update();
 	}
@@ -89,6 +100,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+			//SmartDashboard.putBoolean("Limit Switch", limitSwitch.get());
 	}
 
 	/**

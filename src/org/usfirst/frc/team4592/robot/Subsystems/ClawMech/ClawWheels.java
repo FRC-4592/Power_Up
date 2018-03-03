@@ -12,7 +12,10 @@ public class ClawWheels extends SubsystemFramework{
 	private VictorSP clawRightMotor;
 	private VictorSP clawLeftMotor;
 	private SpeedControllerGroup wheels;
-	public ClawWheelsState state = ClawWheelsState.Off;
+	
+	private int counter = 0;
+	
+	public static ClawWheelsState state = ClawWheelsState.Off;
 	
 	public ClawWheels(VictorSP clawRightMotor, VictorSP clawLeftMotor){
 		this.clawRightMotor = clawRightMotor;
@@ -23,7 +26,7 @@ public class ClawWheels extends SubsystemFramework{
 	}
 	
 	public enum ClawWheelsState{
-		Off, Intake, Spit;
+		Off, Intake, ClawRotation, Spit;
 	}
 	
 	@Override
@@ -34,19 +37,35 @@ public class ClawWheels extends SubsystemFramework{
 			case Off:
 				wheels.set(0);
 				
-				if(Hardware.driverPad.getRawAxis(Constants.CLAW_INTAKE) > 0.2 ){
+				if(Hardware.driverPad.getRawAxis(Constants.CLAW_INTAKE) > 0.2){
 					newState = ClawWheelsState.Intake;
 				}else if(Hardware.driverPad.getRawAxis(Constants.CLAW_SPIT) > 0.2){
 					newState = ClawWheelsState.Spit;
-				}
+				}/*if(Hardware.driverPad.getRawButton(Constants.SWITCH)
+						|| Hardware.driverPad.getRawButton(Constants.SCALE)
+						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)
+						|| Hardware.operatorPad.getRawButton(Constants.Button1)){
+					newState = ClawWheelsState.ClawRotation;
+				}*/
 	break;
 			case Intake:
-				wheels.set(-1);
+				wheels.set(-0.75);
 				
 				if(Hardware.driverPad.getRawAxis(Constants.CLAW_INTAKE) <= 0.2) {
 					newState = ClawWheelsState.Off;
 				}
 	break;
+		
+			case ClawRotation:
+				wheels.set(-0.5);
+				
+				if(counter > 200) {
+					newState = ClawWheelsState.Off;
+				}
+				
+				counter++;
+	break;
+	
 			case Spit:
 				wheels.set(1);
 				

@@ -165,7 +165,7 @@ public class Drivetrain extends SubsystemFramework {
 				shifter.close();
 	
 				// Joystick Control
-				myRobot.arcadeDrive((Hardware.driverPad.getRawAxis(1) * -1), (Hardware.driverPad.getRawAxis(4) * -1),false);
+				myRobot.arcadeDrive((Hardware.driverPad.getRawAxis(1) * -1), (Hardware.driverPad.getRawAxis(4) * -1), false);
 	
 				// Switch To HighGear When Asked
 				if (Hardware.driverPad.getRawButton(Constants.DRIVETRAIN_HIGHGEAR)) {
@@ -185,6 +185,7 @@ public class Drivetrain extends SubsystemFramework {
 				if (Hardware.driverPad.getRawButton(Constants.DRIVETRAIN_LOWGEAR)) {
 					newState = DrivetrainStates.LowGear;
 				}
+				
 			break;
 	
 			default:
@@ -202,7 +203,6 @@ public class Drivetrain extends SubsystemFramework {
 	@Override
 	public void outputToSmartDashboard() {
 		// Robot Angle
-		// SmartDashboard.putNumber("Angle", SpartanBoard.getAngle());
 
 		// Robot Position
 		SmartDashboard.putNumber("Right Position", rightMasterMotor.getSelectedSensorPosition(0));
@@ -229,24 +229,26 @@ public class Drivetrain extends SubsystemFramework {
 		// Reset SpartanBoard
 		// SpartanBoard.reset();
 
+		// Setup Master Slave Relationship
+				rightSlaveMotor.follow(rightMasterMotor);
+				rightSlaveMotor2.follow(rightMasterMotor);
+				leftSlaveMotor.follow(leftMasterMotor);
+				leftSlaveMotor2.follow(leftMasterMotor);
+				
 		// Setup Master Encoders
 		rightMasterMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		leftMasterMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
 		rightMasterMotor.setSelectedSensorPosition(0, 0, 10);
 		leftMasterMotor.setSelectedSensorPosition(0, 0, 10);
-
-		/*
-		 * MAY NEED TO REVERSE SENSORS rightMasterMotor.setSensorPhase(false);
-		 * leftMasterMotor.setSensorPhase(false);
-		 */
-
-		// Setup Master Slave Relationship
-		leftSlaveMotor.set(ControlMode.Follower, leftMasterMotor.getDeviceID());
-		leftSlaveMotor2.set(ControlMode.Follower, leftMasterMotor.getDeviceID());
-		rightSlaveMotor.follow(rightMasterMotor);
-		rightSlaveMotor2.follow(rightMasterMotor);
-		leftSlaveMotor.follow(leftMasterMotor);
-		leftSlaveMotor2.follow(leftMasterMotor);
+		
+		rightMasterMotor.configNominalOutputForward(0, 10);
+		leftMasterMotor.configNominalOutputForward(0, 10);
+		rightMasterMotor.configNominalOutputReverse(0, 10);
+		leftMasterMotor.configNominalOutputReverse(0, 10);
+		rightMasterMotor.configPeakOutputForward(1, 10);
+		leftMasterMotor.configPeakOutputForward(1, 10);
+		rightMasterMotor.configPeakOutputReverse(-1, 10);
+		leftMasterMotor.configPeakOutputReverse(-1, 10);
 	}
 }
