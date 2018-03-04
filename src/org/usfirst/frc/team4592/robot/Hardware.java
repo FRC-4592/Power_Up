@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -57,12 +58,15 @@ public class Hardware {
 			new DigitalInput(Constants.CLIMBER_LIMIT_SWITCH);
 	
 	//Gyro
-		/*public static final ADXRS450_Gyro SpartanBoard =
-				new ADXRS450_Gyro();*/
+	public static final AHRS MXP = new AHRS(Constants.MXP_PORT); 
 		
 	//Shifter
 		public static final doubleSolenoid shifter = 
 				new doubleSolenoid(Constants.SHIFTER_OPEN, Constants.SHIFTER_CLOSE);
+		
+	//Wings
+		public static final doubleSolenoid wingRelease =
+				new doubleSolenoid(Constants.WING_OPEN, Constants.WING_CLOSE);
 		
 		//Sticks
 		public static final Joystick driverPad = 

@@ -72,7 +72,7 @@ public class Elevator extends SubsystemFramework {
 					newState = ElevatorState.IntakePosition;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button12)) {
 					newState = ElevatorState.Up;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
 				}
 	break;		
@@ -95,7 +95,7 @@ public class Elevator extends SubsystemFramework {
 					newState = ElevatorState.ScalePosition;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
 					newState = ElevatorState.StowPosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
 				}
 	break;
@@ -111,7 +111,7 @@ public class Elevator extends SubsystemFramework {
 					newState = ElevatorState.Stop;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
 					newState = ElevatorState.StowPosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
 				}
 	break;
@@ -126,7 +126,7 @@ public class Elevator extends SubsystemFramework {
 					newState = ElevatorState.Stop;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
 					newState = ElevatorState.StowPosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
 				}
 	break;
@@ -144,30 +144,19 @@ public class Elevator extends SubsystemFramework {
 					newState = ElevatorState.Up;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
 					newState = ElevatorState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
 				}
 	break;
 			case ClimbUp:
-				elevatorMotor.set(ControlMode.Position, setPosition(43));
+				elevatorMotor.set(ControlMode.Position, setPosition(25));
 				
-				if(Hardware.driverPad.getRawButton(Constants.SWITCH)) {
-					newState = ElevatorState.SwitchPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)
-						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ElevatorState.ScalePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ElevatorState.IntakePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button6)) {
+				if(Hardware.driverPad.getRawButton(Constants.CLIMB_DOWN)) {
 					newState = ElevatorState.ClimbDown;
 				}
 	break;
 			case ClimbDown:
-				elevatorMotor.set(ControlMode.Position, 35);
-				
-				if(Hardware.operatorPad.getRawButton(Constants.Button2)) {
-					newState = ElevatorState.ClimbUp;
-				}
+				elevatorMotor.set(ControlMode.Position, 15);
 	break;
 			default:
 				newState = ElevatorState.Stop;

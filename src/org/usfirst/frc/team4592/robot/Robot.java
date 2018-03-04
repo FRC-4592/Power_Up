@@ -11,6 +11,7 @@ import org.usfirst.frc.team4592.robot.Lib.Loop.MultiLooper;
 import org.usfirst.frc.team4592.robot.Subsystems.Climber;
 import org.usfirst.frc.team4592.robot.Subsystems.Drivetrain;
 import org.usfirst.frc.team4592.robot.Subsystems.Elevator;
+import org.usfirst.frc.team4592.robot.Subsystems.Wings;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawWheels;
 
@@ -41,7 +42,9 @@ public class Robot extends IterativeRobot {
 														Constants.Claw_Rotation_Kf, Constants.Claw_Rotation_Kp,
 														Constants.Claw_Rotation_Ki, Constants.Claw_Rotation_Kd);
 	private Climber climber = new Climber(Hardware.rightClimberMotor, Hardware.rightClimberMotor2,
-										Hardware.leftClimberMotor, Hardware.leftClimberMotor2);
+										Hardware.leftClimberMotor, Hardware.leftClimberMotor2, Hardware.climberLimitSwitch);
+	
+	private Wings wings = new Wings(Hardware.wingRelease, Hardware.climberLimitSwitch);
 	
 	//private DigitalInput limitSwitch;
 	/**
@@ -53,14 +56,14 @@ public class Robot extends IterativeRobot {
 		myDrive.setupSensors();
 		clawRotation.setupSensors();
 		elevator.setupSensors();
+		climber.setupSensors();
 		
 		DriveLooper.addLoopable(myDrive);
 		SSLooper.addLoopable(clawWheels);
 		SSLooper.addLoopable(elevator);
 		SSLooper.addLoopable(clawRotation);
 		SSLooper.addLoopable(climber);
-		
-		//limitSwitch = new DigitalInput(0);
+		SSLooper.addLoopable(wings); 
 	}
 
 	/**
@@ -100,7 +103,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-			//SmartDashboard.putBoolean("Limit Switch", limitSwitch.get());
+	
 	}
 
 	/**

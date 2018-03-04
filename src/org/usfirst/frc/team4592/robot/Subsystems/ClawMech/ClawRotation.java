@@ -90,7 +90,7 @@ public class ClawRotation extends SubsystemFramework{
 				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
 					newState = ClawRotationState.IntakePosition;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
-						|| Hardware.operatorPad.getRawButton(Constants.Button6)) {
+						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ClawRotationState.StowPosition;
 				}
 	break;					
@@ -102,7 +102,8 @@ public class ClawRotation extends SubsystemFramework{
 					newState = ClawRotationState.PlacePosition;
 				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)){
 					newState = ClawRotationState.ScalePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
+						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ClawRotationState.StowPosition;
 				}
 	break;		
@@ -117,7 +118,8 @@ public class ClawRotation extends SubsystemFramework{
 					newState = ClawRotationState.ScalePosition;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
 					newState = ClawRotationState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
+						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ClawRotationState.StowPosition;
 				}
 	
@@ -135,7 +137,8 @@ public class ClawRotation extends SubsystemFramework{
 					newState = ClawRotationState.PlacePosition;
 				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
 					newState = ClawRotationState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
+						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ClawRotationState.StowPosition;
 				}
 	break;		

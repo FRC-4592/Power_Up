@@ -1,5 +1,8 @@
 package org.usfirst.frc.team4592.robot;
 
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SPI.Port;
+
 /* This file is used to hold constant robot values.
  * DO NOT DEFINE MOTOR PWM OR PID VALUES OUTSIDE OF THIS FILE!!
  */
@@ -35,8 +38,13 @@ public class Constants {
 	
 	//Climber Sensor
 	public static final int CLIMBER_LIMIT_SWITCH = 0;
-	//Wing Pneumatics
 	
+	//Wing Pneumatics
+	public static final int WING_OPEN = 0;
+	public static final int WING_CLOSE = 1;
+	
+	//Gyro
+	public static final Port MXP_PORT = SPI.Port.kMXP;
 	//Stick USB Values
 	public static final int DRIVE_USB_PORT = 0;
 	public static final int OPERATOR_USB_PORT = 1;
@@ -52,12 +60,21 @@ public class Constants {
 		public static final int SWITCH = 4;
 		public static final int SCALE = 5;
 		public static final int HIGH_SCALE = 6;
+		public static final int CLIMB_UP = 7;
+		public static final int CLIMB_DOWN = 8;
 		
 		//Claw Buttons
 		public static final int CLAW_INTAKE = 3;
 		public static final int CLAW_SPIT = 2;
 		
-	//Operator Buttons	
+		//Wing Buttons
+		public static final int WING_DEPLOY = 9;
+		
+		//Climber Buttons
+		public static final int CLIMB = 10;
+		
+		
+	/*//Operator Buttons	
 		//Claw Buttons
 		public static final int CLAW_INTAKE_POS = 3;
 		public static final int CLAW_90 = 5;
@@ -66,16 +83,13 @@ public class Constants {
 		//Elevator Button
 		public static final int ELEVATOR_CLIMB_POS = 4;
 		
-		//Climber Buttons
-		public static final int CLIMB = 5;
-		
 		//Wing Buttons
 		public static final int RIGHT_WING_DEPLOY = 6;
 		public static final int LEFT_WING_DEPLOY = 7;
 		public static final int WINGS_DEPLOY = 8;
 		public static final int RIGHT_WING_LIFT = 9;
 		public static final int LEFT_WING_LIFT = 10;
-		
+		*/
 		//Buttons
 		public static final int Button1 = 1;
 		public static final int Button2 = 2;

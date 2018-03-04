@@ -6,13 +6,11 @@ import org.usfirst.frc.team4592.robot.Lib.SubsystemFramework;
 import org.usfirst.frc.team4592.robot.Util.PID;
 import org.usfirst.frc.team4592.robot.Util.doubleSolenoid;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,7 +24,7 @@ public class Drivetrain extends SubsystemFramework {
 	private WPI_VictorSPX rightSlaveMotor2;
 	private WPI_VictorSPX leftSlaveMotor2;
 	private doubleSolenoid shifter;
-	private ADXRS450_Gyro SpartanBoard;
+	private AHRS MXP;
 
 	// PID
 	private PID Turn_Angle_PI;
@@ -45,7 +43,7 @@ public class Drivetrain extends SubsystemFramework {
 
 	public Drivetrain(WPI_TalonSRX rightMasterMotor, WPI_VictorSPX rightSlaveMotor, WPI_VictorSPX rightSlaveMotor2,
 			WPI_TalonSRX leftMasterMotor, WPI_VictorSPX leftSlaveMotor, WPI_VictorSPX leftSlaveMotor2,
-			doubleSolenoid shifter, ADXRS450_Gyro SpartanBoard, double Average_Ticks_Per_Feet, double Turn_ANGLE_Kp,
+			doubleSolenoid shifter, AHRS MXP, double Average_Ticks_Per_Feet, double Turn_ANGLE_Kp,
 			double Turn_ANGLE_Ki, double Drive_Angle_Kp, double Drive_Angle_Ki, double Drive_Kp, double Drive_Ki) {
 		// Setup Drivetrain
 		myRobot = new DifferentialDrive(rightMasterMotor, leftMasterMotor);
@@ -61,8 +59,8 @@ public class Drivetrain extends SubsystemFramework {
 		// Shifter
 		this.shifter = shifter;
 
-		// Spartan Board (Gyro)
-		this.SpartanBoard = SpartanBoard;
+		// MXP (Gyro)
+		this.MXP = MXP;
 
 		// Constants
 		this.Average_Ticks_Per_Feet = Average_Ticks_Per_Feet;
@@ -97,7 +95,7 @@ public class Drivetrain extends SubsystemFramework {
 	 * High Gear State Puts Robot In Highest Speed Best For Long Distance Travel
 	 */
 	public enum DrivetrainStates {
-		LowGear, HighGear;
+		LowGear, HighGear, Off;
 	}
 
 	// Drive Forward at Indicated Speed
@@ -112,7 +110,7 @@ public class Drivetrain extends SubsystemFramework {
 		goal_Ticks = (amtToDrive * Average_Ticks_Per_Feet);
 
 		goal_Ticks_Error = (goal_Ticks - getPosition());
-		goal_Angle_Error = goal_Angle + SpartanBoard.getAngle();
+		//goal_Angle_Error = goal_Angle + SpartanBoard.getAngle();
 
 		myRobot.arcadeDrive(Drive_PI.getControlledOutputP(goal_Ticks_Error),
 				Drive_Angle_PI.getOutputP(goal_Angle_Error));
@@ -120,7 +118,7 @@ public class Drivetrain extends SubsystemFramework {
 
 	// Turn to wanted angle
 	public void autoTurn(double wantedDegree) {
-		goal_Angle_Error = wantedDegree + SpartanBoard.getAngle();
+		//goal_Angle_Error = wantedDegree + SpartanBoard.getAngle();
 
 		System.out.println(goal_Angle_Error);
 
@@ -151,10 +149,6 @@ public class Drivetrain extends SubsystemFramework {
 		return goal_Angle_Error;
 	}
 
-	public double get_Angle() {
-		return SpartanBoard.getAngle();
-	}
-
 	@Override
 	public void update() {
 		DrivetrainStates newState = state;
@@ -170,9 +164,10 @@ public class Drivetrain extends SubsystemFramework {
 				// Switch To HighGear When Asked
 				if (Hardware.driverPad.getRawButton(Constants.DRIVETRAIN_HIGHGEAR)) {
 					newState = DrivetrainStates.HighGear;
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_DOWN)) {
+					newState = DrivetrainStates.Off;
 				}
-			break;
-			
+	break;		
 			case HighGear:
 				// Shift Into HighGear
 				shifter.open();
@@ -184,10 +179,14 @@ public class Drivetrain extends SubsystemFramework {
 				// Switch To LowGear When Asked
 				if (Hardware.driverPad.getRawButton(Constants.DRIVETRAIN_LOWGEAR)) {
 					newState = DrivetrainStates.LowGear;
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_DOWN)) {
+					newState = DrivetrainStates.Off;
 				}
 				
-			break;
-	
+	break;
+			case Off:
+				//I do nothing but shut off drivetrain
+	break;
 			default:
 				newState = DrivetrainStates.HighGear;
 			break;
@@ -205,30 +204,96 @@ public class Drivetrain extends SubsystemFramework {
 		// Robot Angle
 
 		// Robot Position
-		SmartDashboard.putNumber("Right Position", rightMasterMotor.getSelectedSensorPosition(0));
+		/*SmartDashboard.putNumber("Right Position", rightMasterMotor.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Left Position", leftMasterMotor.getSelectedSensorPosition(0));
 		System.out.println("Right Position: " + rightMasterMotor.getSelectedSensorPosition(0));
 		System.out.println("Left Position: " + leftMasterMotor.getSelectedSensorPosition(0));
-	}
+		
+		/* Display 6-axis Processed Angle Data                                      
+        SmartDashboard.putBoolean(  "IMU_Connected", MXP.isConnected());
+        SmartDashboard.putBoolean(  "IMU_IsCalibrating", MXP.isCalibrating());
+        SmartDashboard.putNumber(   "IMU_Yaw", MXP.getYaw());
+        SmartDashboard.putNumber(   "IMU_Pitch", MXP.getPitch());
+        SmartDashboard.putNumber(   "IMU_Roll", MXP.getRoll());
+        
+        /* Display tilt-corrected, Magnetometer-based heading (requires             
+        /* magnetometer calibration to be useful)                                   
+        
+        SmartDashboard.putNumber(   "IMU_CompassHeading",   MXP.getCompassHeading());
+        
+        /* Display 9-axis Heading (requires magnetometer calibration to be useful)  
+        SmartDashboard.putNumber(   "IMU_FusedHeading",     MXP.getFusedHeading());
 
-	/*
-	 * Reset SpartanBoard When Current Robot Angle is outside (-360, 360)
-	 */
-	public void resetSpartanBoard() {
-		if (Math.abs(SpartanBoard.getAngle()) > 360) {
-			SpartanBoard.reset();
-		}
-	}
+        /* These functions are compatible w/the WPI Gyro Class, providing a simple  
+        /* path for upgrading from the Kit-of-Parts gyro to the navx MXP            
+        
+        SmartDashboard.putNumber(   "IMU_TotalYaw",         MXP.getAngle());
+        SmartDashboard.putNumber(   "IMU_YawRateDPS",       MXP.getRate());
 
-	public void zeroSpartanBoard() {
-		SpartanBoard.reset();
+        /* Display Processed Acceleration Data (Linear Acceleration, Motion Detect) 
+        
+        SmartDashboard.putNumber(   "IMU_Accel_X",          MXP.getWorldLinearAccelX());
+        SmartDashboard.putNumber(   "IMU_Accel_Y",          MXP.getWorldLinearAccelY());
+        SmartDashboard.putBoolean(  "IMU_IsMoving",         MXP.isMoving());
+        SmartDashboard.putBoolean(  "IMU_IsRotating",       MXP.isRotating());
+
+        /* Display estimates of velocity/displacement.  Note that these values are  
+        /* not expected to be accurate enough for estimating robot position on a    
+        /* FIRST FRC Robotics Field, due to accelerometer noise and the compounding 
+        /* of these errors due to single (velocity) integration and especially      
+        /* double (displacement) integration.                                       
+        
+        SmartDashboard.putNumber(   "Velocity_X",           MXP.getVelocityX());
+        SmartDashboard.putNumber(   "Velocity_Y",           MXP.getVelocityY());
+        SmartDashboard.putNumber(   "Displacement_X",       MXP.getDisplacementX());
+        SmartDashboard.putNumber(   "Displacement_Y",       MXP.getDisplacementY());
+        
+        /* Display Raw Gyro/Accelerometer/Magnetometer Values                       
+        /* NOTE:  These values are not normally necessary, but are made available   
+        /* for advanced users.  Before using this data, please consider whether     
+        /* the processed data (see above) will suit your needs.                     
+        
+        SmartDashboard.putNumber(   "RawGyro_X",            MXP.getRawGyroX());
+        SmartDashboard.putNumber(   "RawGyro_Y",            MXP.getRawGyroY());
+        SmartDashboard.putNumber(   "RawGyro_Z",            MXP.getRawGyroZ());
+        SmartDashboard.putNumber(   "RawAccel_X",           MXP.getRawAccelX());
+        SmartDashboard.putNumber(   "RawAccel_Y",           MXP.getRawAccelY());
+        SmartDashboard.putNumber(   "RawAccel_Z",           MXP.getRawAccelZ());
+        SmartDashboard.putNumber(   "RawMag_X",             MXP.getRawMagX());
+        SmartDashboard.putNumber(   "RawMag_Y",             MXP.getRawMagY());
+        SmartDashboard.putNumber(   "RawMag_Z",             MXP.getRawMagZ());
+        SmartDashboard.putNumber(   "IMU_Temp_C",           MXP.getTempC());
+        SmartDashboard.putNumber(   "IMU_Timestamp",        MXP.getLastSensorTimestamp());
+        
+        /* Omnimount Yaw Axis Information                                           
+        /* For more info, see http://navx-mxp.kauailabs.com/installation/omnimount  
+        AHRS.BoardYawAxis yaw_axis = MXP.getBoardYawAxis();
+        SmartDashboard.putString(   "YawAxisDirection",     yaw_axis.up ? "Up" : "Down" );
+        SmartDashboard.putNumber(   "YawAxis",              yaw_axis.board_axis.getValue() );
+        
+        /* Sensor Board Information                                                 
+        SmartDashboard.putString(   "FirmwareVersion",      MXP.getFirmwareVersion());
+        
+        /* Quaternion Data                                                          
+        /* Quaternions are fascinating, and are the most compact representation of  
+        /* orientation data.  All of the Yaw, Pitch and Roll Values can be derived  
+        /* from the Quaternions.  If interested in motion processing, knowledge of  
+        /* Quaternions is highly recommended.                                       
+        SmartDashboard.putNumber(   "QuaternionW",          MXP.getQuaternionW());
+        SmartDashboard.putNumber(   "QuaternionX",          MXP.getQuaternionX());
+        SmartDashboard.putNumber(   "QuaternionY",          MXP.getQuaternionY());
+        SmartDashboard.putNumber(   "QuaternionZ",          MXP.getQuaternionZ());
+        
+        /* Connectivity Debugging Support                                           
+        SmartDashboard.putNumber(   "IMU_Byte_Count",       MXP.getByteCount());
+        SmartDashboard.putNumber(   "IMU_Update_Count",     MXP.getUpdateCount());*/
 	}
 
 	@Override
 	public void setupSensors() {
-		// Reset SpartanBoard
-		// SpartanBoard.reset();
-
+		// Setup MXP
+			//MXP.reset();
+		
 		// Setup Master Slave Relationship
 				rightSlaveMotor.follow(rightMasterMotor);
 				rightSlaveMotor2.follow(rightMasterMotor);
