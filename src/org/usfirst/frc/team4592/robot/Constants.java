@@ -17,8 +17,8 @@ public class Constants {
 	public static final int LEFT_SLAVE_MOTOR_2_CAN = 0;
 	
 	//Drivetrain Pnuematics
-	public static final int SHIFTER_OPEN = 2;
-	public static final int SHIFTER_CLOSE = 3;
+	public static final int SHIFTER_OPEN = 3;
+	public static final int SHIFTER_CLOSE = 2;
 	
 	//Elevator
 	public static final int ELEVATOR_MOTOR_CAN = 10;
@@ -55,7 +55,6 @@ public class Constants {
 		public static final int DRIVETRAIN_HIGHGEAR = 2;
 	
 		//Elevator Buttons
-		public static final int STOW = 7;
 		public static final int INTAKE = 3;
 		public static final int SWITCH = 4;
 		public static final int SCALE = 5;
@@ -74,22 +73,7 @@ public class Constants {
 		public static final int CLIMB = 10;
 		
 		
-	/*//Operator Buttons	
-		//Claw Buttons
-		public static final int CLAW_INTAKE_POS = 3;
-		public static final int CLAW_90 = 5;
-		public static final int CLAW_STOW_POS = 6;
-		
-		//Elevator Button
-		public static final int ELEVATOR_CLIMB_POS = 4;
-		
-		//Wing Buttons
-		public static final int RIGHT_WING_DEPLOY = 6;
-		public static final int LEFT_WING_DEPLOY = 7;
-		public static final int WINGS_DEPLOY = 8;
-		public static final int RIGHT_WING_LIFT = 9;
-		public static final int LEFT_WING_LIFT = 10;
-		*/
+	//Operator Buttons		
 		//Buttons
 		public static final int Button1 = 1;
 		public static final int Button2 = 2;
@@ -119,4 +103,13 @@ public class Constants {
 		public static final double Claw_Rotation_Ki = 0.;
 		public static final double Claw_Rotation_Kd = 0;
 		public static final double Safe_Angle = 70;
+		
+	//Drivetrain PID Values
+		public static final double Average_Ticks_Per_Foot = 4032.97;
+		public static final double Turn_Angle_Kp = 0.0124;
+		public static final double Turn_Angle_Ki = 0;
+		public static final double Drive_Angle_Kp = 0.06;
+		public static final double Drive_Angle_Ki = 0;
+		public static final double Drive_Kp = 0.000115;
+		public static final double Drive_Ki = 0;
 }

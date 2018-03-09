@@ -44,15 +44,15 @@ public class PID{
 				return output;
 			}
 			
-			public double getControlledOutputP(double error){
+			public double getControlledOutputP(double error, double controlValue){
 				this.error = error;
 				
 				output = error * Kp;
 				
-				if(output > 0.5){
-					return 0.5;
-				}else if(output < -0.5){
-					return -0.5;
+				if(output > controlValue){
+					return controlValue;
+				}else if(output < -controlValue){
+					return -controlValue;
 				}
 				
 				return output;

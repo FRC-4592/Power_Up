@@ -5,7 +5,6 @@ import org.usfirst.frc.team4592.robot.Hardware;
 import org.usfirst.frc.team4592.robot.Lib.SubsystemFramework;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation.ClawRotationState;
-import org.usfirst.frc.team4592.robot.Util.PID;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -24,7 +23,10 @@ public class Elevator extends SubsystemFramework {
 	private double Elevator_Ki;
 	private double Elevator_Kd;
 	
-	public ElevatorState state = ElevatorState.Stop;
+	//Button
+	public int buttonPressed = 11;
+	
+	public static ElevatorState state = ElevatorState.StartPosition;
 
 	public Elevator(TalonSRX elevatorMotor, double Average_Ticks_Per_Inch, 
 						double Elevator_Kf, double Elevator_Kp, 
@@ -44,7 +46,7 @@ public class Elevator extends SubsystemFramework {
 	}
 	
 	public enum ElevatorState {
-		Stop, Up, StowPosition, IntakePosition, SwitchPosition, ScalePosition, ClimbUp, ClimbDown;
+		Stop, Up, StowPosition, IntakePosition, SwitchPosition, ScalePosition, AutoScalePosition, StartPosition, ClimbUp, ClimbDown;
 	}
 
 	public double setPosition(double pos) {
@@ -60,20 +62,139 @@ public class Elevator extends SubsystemFramework {
 		ElevatorState newState = state;
 
 		switch (state) {
-			case Stop:
-				elevatorMotor.set(ControlMode.PercentOutput, 0);
+			case StartPosition:
+				elevatorMotor.set(ControlMode.Position, setPosition(0));
+				
+				ClawRotation.state = ClawRotationState.StartPosition;
+				
+				if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
+					newState = ElevatorState.IntakePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SWITCH)) {
+					newState = ElevatorState.SwitchPosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					buttonPressed = Constants.SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					buttonPressed = Constants.HIGH_SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
+					newState = ElevatorState.ClimbUp;
+				}
+	break;
+			case StowPosition:
+				elevatorMotor.set(ControlMode.Position, setPosition(4));
+				
+				ClawRotation.state = ClawRotationState.StowPosition;
+				
+				if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
+					newState = ElevatorState.IntakePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SWITCH)) {
+					newState = ElevatorState.SwitchPosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					buttonPressed = Constants.SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					buttonPressed = Constants.HIGH_SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
+					newState = ElevatorState.ClimbUp;
+				}
+	break;
+			case IntakePosition:
+				if(ClawRotation.testSafeAngle(Constants.Safe_Angle)) {
+					elevatorMotor.set(ControlMode.Position, setPosition(-12));
+				}
+				
+				ClawRotation.state = ClawRotationState.IntakePosition;
 				
 				if(Hardware.driverPad.getRawButton(Constants.SWITCH)) {
 					newState = ElevatorState.SwitchPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)
-						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					buttonPressed = Constants.SCALE;
+					
 					newState = ElevatorState.ScalePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ElevatorState.IntakePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button12)) {
-					newState = ElevatorState.Up;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					buttonPressed = Constants.HIGH_SCALE;
+					
+					newState = ElevatorState.ScalePosition;
 				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
 					newState = ElevatorState.ClimbUp;
+				}
+	break;
+			case SwitchPosition:
+				elevatorMotor.set(ControlMode.Position, setPosition(10));
+	
+				ClawRotation.state = ClawRotationState.PlacePosition;
+				
+				if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
+					newState = ElevatorState.IntakePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					buttonPressed = Constants.SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					buttonPressed = Constants.HIGH_SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
+					newState = ElevatorState.ClimbUp;
+				}
+	break;
+			case ScalePosition:
+				elevatorMotor.set(ControlMode.Position, setPosition(41));
+				
+				if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					ClawRotation.state = ClawRotationState.PlacePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					ClawRotation.state = ClawRotationState.HighScalePosition;
+				}
+				
+				if(Hardware.driverPad.getRawButtonReleased(buttonPressed)) {
+					newState = ElevatorState.StowPosition;
+				}
+	break;
+			case AutoScalePosition:
+				elevatorMotor.set(ControlMode.Position, setPosition(41));
+				
+				ClawRotation.state = ClawRotationState.HighScalePosition;
+	break;
+			case ClimbUp:
+				elevatorMotor.set(ControlMode.Position, setPosition(30));
+				
+				ClawRotation.state = ClawRotationState.Stop;
+				
+				if(Hardware.driverPad.getRawButton(Constants.CLIMB_DOWN)) {
+					newState = ElevatorState.ClimbDown;
+				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
+					newState = ElevatorState.IntakePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)) {
+					buttonPressed = Constants.SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
+					buttonPressed = Constants.HIGH_SCALE;
+					
+					newState = ElevatorState.ScalePosition;
+				}
+	break;
+			case ClimbDown:
+				elevatorMotor.set(ControlMode.Position, 15);
+				
+				ClawRotation.state = ClawRotationState.Stop;
+				
+				if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
+					newState = ElevatorState.ClimbUp;
+				}
+	break;
+			case Stop:
+				elevatorMotor.set(ControlMode.PercentOutput, 0);
+				
+				if(Hardware.operatorPad.getRawButton(Constants.Button12)) {
+					newState = ElevatorState.Up;
 				}
 	break;		
 			case Up:
@@ -82,81 +203,6 @@ public class Elevator extends SubsystemFramework {
 				if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
 					newState = ElevatorState.Stop;
 				}
-	break;
-			case IntakePosition:
-				if(ClawRotation.testSafeAngle(Constants.Safe_Angle)) {
-					elevatorMotor.set(ControlMode.Position, setPosition(-14));
-				}
-				
-				if (Hardware.driverPad.getRawButton(Constants.SWITCH)) {
-					newState = ElevatorState.SwitchPosition;
-				} else if (Hardware.driverPad.getRawButton(Constants.SCALE)
-						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ElevatorState.ScalePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
-					newState = ElevatorState.StowPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ElevatorState.ClimbUp;
-				}
-	break;
-			case SwitchPosition:
-				elevatorMotor.set(ControlMode.Position, setPosition(10));
-	
-				if (Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ElevatorState.IntakePosition;
-				} else if (Hardware.driverPad.getRawButton(Constants.SCALE)
-						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ElevatorState.ScalePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
-					newState = ElevatorState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
-					newState = ElevatorState.StowPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ElevatorState.ClimbUp;
-				}
-	break;
-			case ScalePosition:
-				elevatorMotor.set(ControlMode.Position, setPosition(40));
-	
-				if (Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ElevatorState.IntakePosition;
-				} else if (Hardware.driverPad.getRawButton(Constants.SWITCH)) {
-					newState = ElevatorState.SwitchPosition;
-				} else if(Hardware.operatorPad.getRawButton(Constants.Button5)){
-					newState = ElevatorState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
-					newState = ElevatorState.StowPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ElevatorState.ClimbUp;
-				}
-	break;
-			case StowPosition:
-				elevatorMotor.set(ControlMode.Position, setPosition(4));
-				
-				if(Hardware.driverPad.getRawButton(Constants.SWITCH)) {
-					newState = ElevatorState.SwitchPosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.SCALE)
-						|| Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ElevatorState.ScalePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ElevatorState.IntakePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button12)) {
-					newState = ElevatorState.Up;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
-					newState = ElevatorState.Stop;
-				}else if(Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ElevatorState.ClimbUp;
-				}
-	break;
-			case ClimbUp:
-				elevatorMotor.set(ControlMode.Position, setPosition(25));
-				
-				if(Hardware.driverPad.getRawButton(Constants.CLIMB_DOWN)) {
-					newState = ElevatorState.ClimbDown;
-				}
-	break;
-			case ClimbDown:
-				elevatorMotor.set(ControlMode.Position, 15);
 	break;
 			default:
 				newState = ElevatorState.Stop;
@@ -172,19 +218,13 @@ public class Elevator extends SubsystemFramework {
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putNumber("Elevator Position", (elevatorMotor.getSelectedSensorPosition(0)));
+		/*SmartDashboard.putNumber("Elevator Position", (elevatorMotor.getSelectedSensorPosition(0)));
 		SmartDashboard.putNumber("Elevator Distance", elevatorMotor.getSelectedSensorPosition(0) / Average_Ticks_Per_Inch);
-		SmartDashboard.putNumber("Elevator Motor", elevatorMotor.getMotorOutputPercent());
-		SmartDashboard.putNumber("Elevator 10", setPosition(38));
-		
-		System.out.println("Elevator Position: " + (elevatorMotor.getSelectedSensorPosition(0) / Average_Ticks_Per_Inch));
-		System.out.println("Elevator Motor: " + elevatorMotor.getMotorOutputPercent());
-		System.out.println("Elevator 10: " + setPosition(38));
+		SmartDashboard.putNumber("Elevator Button", buttonPressed);*/
 	}
 
 	@Override
 	public void setupSensors() {	
-		SmartDashboard.putBoolean("Inside", false);
 		// Set Position To 0 When The Robot Turns On
 		elevatorMotor.setSelectedSensorPosition(0, 0, 10);
 				

@@ -16,4 +16,10 @@ public class AutoController extends AutoFramework{
 		
 	}
 
+	@Override
+	public void getGameData() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -3,12 +3,12 @@ package org.usfirst.frc.team4592.robot.Subsystems;
 import org.usfirst.frc.team4592.robot.Constants;
 import org.usfirst.frc.team4592.robot.Hardware;
 import org.usfirst.frc.team4592.robot.Lib.SubsystemFramework;
+import org.usfirst.frc.team4592.robot.Subsystems.Elevator.ElevatorState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climber extends SubsystemFramework {
 	private VictorSPX leftClimberMotor;
@@ -44,24 +44,23 @@ public class Climber extends SubsystemFramework {
 			leftClimberMotor.set(ControlMode.PercentOutput, 0);
 			leftClimberMotor2.set(ControlMode.PercentOutput, 0);
 			
-			if (Hardware.driverPad.getRawButton(Constants.CLIMB) && !climberLimitSwitch.get()) {
+			if (Hardware.driverPad.getRawButton(Constants.CLIMB) && Elevator.state == ElevatorState.ClimbDown) {
 				newState = ClimberState.Climb;
 			}
 	break;
 
 		case Climb:
 			// Comp Bot
-			// rightClimberMotor.set(ControlMode.PercentOutput, -1);
-			// rightClimberMotor2.set(ControlMode.PercentOutput, 1);
-			// leftClimberMotor.set(ControlMode.PercentOutput, -1);
-			// leftClimberMotor2.set(ControlMode.PercentOutput, 1);
-			SmartDashboard.putBoolean("Climber in", true);
+			rightClimberMotor.set(ControlMode.PercentOutput, -1);
+			rightClimberMotor2.set(ControlMode.PercentOutput, 1);
+			leftClimberMotor.set(ControlMode.PercentOutput, -1);
+			leftClimberMotor2.set(ControlMode.PercentOutput, 1);
 			
 			// Practice Bot
-			rightClimberMotor.set(ControlMode.PercentOutput, 0.75);
-			rightClimberMotor2.set(ControlMode.PercentOutput, -0.75);
-			leftClimberMotor.set(ControlMode.PercentOutput, -0.75);
-			leftClimberMotor2.set(ControlMode.PercentOutput, -0.75);
+			//rightClimberMotor.set(ControlMode.PercentOutput, 0.75);
+			//rightClimberMotor2.set(ControlMode.PercentOutput, -0.75);
+			//leftClimberMotor.set(ControlMode.PercentOutput, -0.75);
+			//leftClimberMotor2.set(ControlMode.PercentOutput, -0.75);
 
 			if (Hardware.driverPad.getRawButtonReleased(Constants.CLIMB)) {
 				newState = ClimberState.Off;
@@ -76,21 +75,14 @@ public class Climber extends SubsystemFramework {
 		if (newState != state) {
 			state = newState;
 		}
-		
-		outputToSmartDashboard();
 	}
 
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putBoolean("Climber Limit Switch", !climberLimitSwitch.get());
-		
-		System.out.println("Climber Limit Switch" + !climberLimitSwitch.get());
 	}
 
 	@Override
 	public void setupSensors() {
-		// TODO Auto-generated method stub
-		SmartDashboard.putBoolean("Climber in", false);
 	}
 
 }

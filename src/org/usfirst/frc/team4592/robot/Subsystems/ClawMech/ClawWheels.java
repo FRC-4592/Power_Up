@@ -49,7 +49,7 @@ public class ClawWheels extends SubsystemFramework{
 				}*/
 	break;
 			case Intake:
-				wheels.set(-0.75);
+				wheels.set(0.75);
 				
 				if(Hardware.driverPad.getRawAxis(Constants.CLAW_INTAKE) <= 0.2) {
 					newState = ClawWheelsState.Off;
@@ -67,7 +67,7 @@ public class ClawWheels extends SubsystemFramework{
 	break;
 	
 			case Spit:
-				wheels.set(1);
+				wheels.set(-1);
 				
 				if(Hardware.driverPad.getRawAxis(Constants.CLAW_SPIT) <= 0.2) {
 					newState = ClawWheelsState.Off;

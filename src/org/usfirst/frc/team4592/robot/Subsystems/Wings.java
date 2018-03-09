@@ -3,9 +3,11 @@ package org.usfirst.frc.team4592.robot.Subsystems;
 import org.usfirst.frc.team4592.robot.Constants;
 import org.usfirst.frc.team4592.robot.Hardware;
 import org.usfirst.frc.team4592.robot.Lib.SubsystemFramework;
+import org.usfirst.frc.team4592.robot.Subsystems.Elevator.ElevatorState;
 import org.usfirst.frc.team4592.robot.Util.doubleSolenoid;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Wings extends SubsystemFramework{
 	private doubleSolenoid wingRelease;
@@ -35,13 +37,13 @@ public class Wings extends SubsystemFramework{
 			case Loaded:
 				wingRelease.open();
 				
-				if(cycle && counter >= 40) {
+				if(cycle && counter >= 75) {
 					newState = WingsState.Released;
 					counter2++;
 					counter = 0;
 				}
 				
-				if(Hardware.driverPad.getRawButton(Constants.WING_DEPLOY) && !cycle && !climberLimitSwitch.get()) {
+				if(Hardware.driverPad.getRawButton(Constants.WING_DEPLOY) && !cycle && Elevator.state == ElevatorState.ClimbDown) {
 					cycle = true;
 					newState = WingsState.Released;
 				}
@@ -53,7 +55,7 @@ public class Wings extends SubsystemFramework{
 			case Released:
 				wingRelease.close();
 				
-				 if(cycle && counter >= 40) {
+				 if(cycle && counter >= 75) {
 						newState = WingsState.Loaded;
 						counter = 0;
 				}
@@ -79,6 +81,8 @@ public class Wings extends SubsystemFramework{
 	@Override
 	public void outputToSmartDashboard() {
 		// TODO Auto-generated method stub
+		
+		//SmartDashboard.putBoolean("Limit Switch", climberLimitSwitch.get());
 		
 	}
 

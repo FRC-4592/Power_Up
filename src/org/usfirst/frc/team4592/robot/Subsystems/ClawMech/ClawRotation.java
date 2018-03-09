@@ -31,7 +31,7 @@ public class ClawRotation extends SubsystemFramework{
 	private double ClawRotation_Ki;
 	private double ClawRotation_Kd;
 	
-	public static ClawRotationState state = ClawRotationState.Stop; 
+	public static ClawRotationState state = ClawRotationState.StartPosition; 
 	
 	public ClawRotation(TalonSRX clawRotationMotor, double Average_Ticks_Per_Degree, 
 						double ClawRotation_Kf, double ClawRotation_Kp, 
@@ -56,7 +56,7 @@ public class ClawRotation extends SubsystemFramework{
 	}
 	
 	public enum ClawRotationState{
-		Stop, TestUp, TestDown, TestPosition, IntakePosition, PlacePosition, ScalePosition, StowPosition;  
+		Stop, TestUp, TestDown, TestPosition, IntakePosition, PlacePosition, ScalePosition, HighScalePosition, StowPosition, StartPosition;  
 	}		
 	
 	public double setPosition(double angle) {
@@ -67,8 +67,6 @@ public class ClawRotation extends SubsystemFramework{
 	}
 	
 	public static boolean testSafeAngle(double Safe_Angle) {
-		System.out.println("I'm being called");
-		SmartDashboard.putBoolean("I'm being called", true);
 		return (Safe_Angle * Average_Ticks_Per_Degree) >= clawRotationMotor.getSelectedSensorPosition(0);
 	}
 	
@@ -79,32 +77,28 @@ public class ClawRotation extends SubsystemFramework{
 		switch(state){
 			case Stop:
 				clawRotationMotor.set(ControlMode.PercentOutput, 0);
+	break;			
+			case StartPosition:
+				clawRotationMotor.set(ControlMode.Position, setPosition(0));
 				
-				SmartDashboard.putString("Claw Rotation Stage", "Stop");
-				
-				if(Hardware.driverPad.getRawButton(Constants.SWITCH)
-						|| Hardware.driverPad.getRawButton(Constants.SCALE)) {
-					newState = ClawRotationState.PlacePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ClawRotationState.ScalePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ClawRotationState.IntakePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
-						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ClawRotationState.StowPosition;
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+					newState = ClawRotationState.Stop;
 				}
-	break;					
+	break;
+			case StowPosition:
+				if(Elevator.testSafePosition(Constants.Safe_Position)) {
+					clawRotationMotor.set(ControlMode.Position, setPosition(5));
+				}
+				
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+					newState = ClawRotationState.Stop;
+				}
+	break;
 			case IntakePosition:
 				clawRotationMotor.set(ControlMode.Position, setPosition(85));
 				
-				if(Hardware.driverPad.getRawButton(Constants.SWITCH) 
-					|| Hardware.driverPad.getRawButton(Constants.SCALE)){
-					newState = ClawRotationState.PlacePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)){
-					newState = ClawRotationState.ScalePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
-						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ClawRotationState.StowPosition;
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+					newState = ClawRotationState.Stop;
 				}
 	break;		
 			case PlacePosition:
@@ -112,52 +106,29 @@ public class ClawRotation extends SubsystemFramework{
 					clawRotationMotor.set(ControlMode.Position, setPosition(100));
 				}
 				
-				if(Hardware.driverPad.getRawButton(Constants.INTAKE)){
-					newState = ClawRotationState.IntakePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)){
-					newState = ClawRotationState.ScalePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
 					newState = ClawRotationState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
-						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ClawRotationState.StowPosition;
 				}
-	
 	break;		
 			case ScalePosition:
-				if(Elevator.testSafePosition(Constants.Safe_Position)) {	
-					
-					clawRotationMotor.set(ControlMode.Position, setPosition(133));
+				if(Elevator.testSafePosition(Constants.Safe_Position)) {					
+					clawRotationMotor.set(ControlMode.Position, setPosition(100));
 				}
 				
-				if(Hardware.driverPad.getRawButton(Constants.INTAKE)){
-					newState = ClawRotationState.IntakePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.SWITCH) 
-						  || Hardware.driverPad.getRawButton(Constants.SCALE)){
-					newState = ClawRotationState.PlacePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
-					newState = ClawRotationState.Stop;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button1)
-						|| Hardware.driverPad.getRawButton(Constants.CLIMB_UP)) {
-					newState = ClawRotationState.StowPosition;
-				}
-	break;		
-			case StowPosition:
-				if(Elevator.testSafePosition(Constants.Safe_Position)) {
-					clawRotationMotor.set(ControlMode.Position, setPosition(5));
-				}
-				
-				if(Hardware.driverPad.getRawButton(Constants.SWITCH)
-						|| Hardware.driverPad.getRawButton(Constants.SCALE)) {
-					newState = ClawRotationState.PlacePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.HIGH_SCALE)) {
-					newState = ClawRotationState.ScalePosition;
-				}else if(Hardware.driverPad.getRawButton(Constants.INTAKE)) {
-					newState = ClawRotationState.IntakePosition;
-				}else if(Hardware.operatorPad.getRawButton(Constants.Button5)) {
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
 					newState = ClawRotationState.Stop;
 				}
 	break;
+			case HighScalePosition:
+				if(Elevator.testSafePosition(Constants.Safe_Position)) {	
+					clawRotationMotor.set(ControlMode.Position, setPosition(133));
+				}
+				
+				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
+					newState = ClawRotationState.Stop;
+				}
+	break;		
+		
 			default:
 				newState = ClawRotationState.Stop;
 			break;
@@ -174,17 +145,12 @@ public class ClawRotation extends SubsystemFramework{
 	
 	
 	@Override
-	public void outputToSmartDashboard() {
-		System.out.println("Claw Rotation: " + clawRotationMotor.getSelectedSensorPosition(0));
-		System.out.println("Claw Rotation Goal: " + setPosition(10));
-		
-		SmartDashboard.putNumber("Claw Rotation", clawRotationMotor.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Claw Rotation Goal", setPosition(10));
+	public void outputToSmartDashboard() {		
+		//SmartDashboard.putNumber("Claw Rotation", clawRotationMotor.getSelectedSensorPosition(0));
 	}
 
 	@Override
 	public void setupSensors() {
-		SmartDashboard.putBoolean("I'm being called", false);
 		//Set Position To Zero When Started
 		clawRotationMotor.setSelectedSensorPosition(0, 0, 10);
 				
