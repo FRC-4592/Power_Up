@@ -95,6 +95,7 @@ public class Constants {
 		public static final double Elevator_Ki = 0;
 		public static final double Elevator_Kd = 0;
 		public static final double Safe_Position = 2;
+		public static final double Safe_Position_High = 35;
 		
 	//Claw Rotation PID Values
 		public static final double Average_Ticks_Per_Degree = -41.064957;

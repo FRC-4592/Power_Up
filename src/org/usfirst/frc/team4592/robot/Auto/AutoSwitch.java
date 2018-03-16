@@ -31,20 +31,18 @@ public class AutoSwitch extends AutoFramework{
 				myDrive.autoTurn(60);
 			}else if(counter >= 401 && counter <= 405) {
 				myDrive.zeroSensors();
-			}else if(counter >= 410 && counter <= 750) {
-				myDrive.autoDriveStraight(4.5);
-			}else if(counter >= 755 && counter <= 950) {
+			}else if(counter >= 410 && counter <= 800) {
+				myDrive.autoDriveStraight(5);
+			}else if(counter >= 805 && counter <= 1000) {
 				elevator.state = ElevatorState.SwitchPosition;
 				myDrive.autoTurn(0);
-			}else if(counter >= 951 && counter <= 955) {
+			}else if(counter >= 1001 && counter <= 1005) {
 				myDrive.zeroSensors();
-			}else if(counter >= 960 && counter <= 1300) {
-				myDrive.autoDriveStraight(2.5);
-				
-				if(counter >= 1200) {
-					clawWheels.state = ClawWheelsState.Spit;
-				}
-			}else if(counter >= 1305 && counter <= 1320) {
+			}else if(counter >= 1010 && counter <= 1400) {
+				myDrive.autoDriveStraight(3.5);
+			}else if(counter >= 1405 && counter <= 1465) {
+				clawWheels.state = ClawWheelsState.Spit;
+			}else if(counter >= 1470) {
 				clawWheels.state = ClawWheelsState.Off;
 			}
 		}else if(gameData.charAt(0) == 'R') {
@@ -59,13 +57,11 @@ public class AutoSwitch extends AutoFramework{
 				myDrive.autoTurn(0);
 			}else if(counter >= 951 && counter <= 955) {
 				myDrive.zeroSensors();
-			}else if(counter >= 960 && counter <= 1300) {
-				myDrive.autoDriveStraight(2.5);
-				
-				if(counter >= 1200) {
-					clawWheels.state = ClawWheelsState.Spit;
-				}
-			}else if(counter >= 1305 && counter <= 1320) {
+			}else if(counter >= 960 && counter <= 1450) {
+				myDrive.autoDriveStraight(3.75);
+			}else if(counter >= 1455 && counter <= 1515) {
+				clawWheels.state = ClawWheelsState.Spit;
+			}else if(counter >= 1520) {
 				clawWheels.state = ClawWheelsState.Off;
 			}
 		}else{

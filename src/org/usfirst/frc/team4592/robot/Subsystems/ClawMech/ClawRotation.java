@@ -86,7 +86,7 @@ public class ClawRotation extends SubsystemFramework{
 				}
 	break;
 			case StowPosition:
-				if(Elevator.testSafePosition(Constants.Safe_Position)) {
+				if(Elevator.testSafePosition(Constants.Safe_Position) && Elevator.testSafeHighPosition(Constants.Safe_Position_High)) {
 					clawRotationMotor.set(ControlMode.Position, setPosition(5));
 				}
 				

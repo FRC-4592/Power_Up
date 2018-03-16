@@ -56,6 +56,10 @@ public class Elevator extends SubsystemFramework {
 	public static boolean testSafePosition(double Safe_Position) {
 		return (Safe_Position * Average_Ticks_Per_Inch) > elevatorMotor.getSelectedSensorPosition(0);
 	}
+	
+	public static boolean testSafeHighPosition (double Safe_High_Position) {
+		return (Safe_High_Position * Average_Ticks_Per_Inch) <= elevatorMotor.getSelectedSensorPosition(0);
+	}
 
 	@Override
 	public void update() {
@@ -163,7 +167,7 @@ public class Elevator extends SubsystemFramework {
 				ClawRotation.state = ClawRotationState.HighScalePosition;
 	break;
 			case ClimbUp:
-				elevatorMotor.set(ControlMode.Position, setPosition(30));
+				elevatorMotor.set(ControlMode.Position, setPosition(35));
 				
 				ClawRotation.state = ClawRotationState.Stop;
 				
