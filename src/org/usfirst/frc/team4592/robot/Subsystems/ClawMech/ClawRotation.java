@@ -56,7 +56,7 @@ public class ClawRotation extends SubsystemFramework{
 	}
 	
 	public enum ClawRotationState{
-		Stop, TestUp, TestDown, TestPosition, IntakePosition, PlacePosition, ScalePosition, HighScalePosition, StowPosition, StartPosition;  
+		Stop, IntakePosition, PlacePosition, HighScalePosition, StowPosition, StartPosition;  
 	}		
 	
 	public double setPosition(double angle) {
@@ -79,6 +79,8 @@ public class ClawRotation extends SubsystemFramework{
 				clawRotationMotor.set(ControlMode.PercentOutput, 0);
 	break;			
 			case StartPosition:
+				SmartDashboard.putString("State", "Start");
+				
 				clawRotationMotor.set(ControlMode.Position, setPosition(0));
 				
 				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
@@ -86,6 +88,9 @@ public class ClawRotation extends SubsystemFramework{
 				}
 	break;
 			case StowPosition:
+				SmartDashboard.putString("State", "Stow");
+				
+				//May want stow claw in up position
 				if(Elevator.testSafePosition(Constants.Safe_Position) && Elevator.testSafeHighPosition(Constants.Safe_Position_High)) {
 					clawRotationMotor.set(ControlMode.Position, setPosition(5));
 				}
@@ -95,6 +100,9 @@ public class ClawRotation extends SubsystemFramework{
 				}
 	break;
 			case IntakePosition:
+				SmartDashboard.putString("State", "Intake");
+				
+				//May want to have claw horizontal instead of at a diagonal
 				clawRotationMotor.set(ControlMode.Position, setPosition(85));
 				
 				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
@@ -102,7 +110,11 @@ public class ClawRotation extends SubsystemFramework{
 				}
 	break;		
 			case PlacePosition:
-				if(Elevator.testSafePosition(Constants.Safe_Position)) {					
+				SmartDashboard.putString("State", "Place");
+				
+				if(Elevator.testSafePosition(Constants.Safe_Position)) {
+					SmartDashboard.putString("State", "Inside Place");
+					
 					clawRotationMotor.set(ControlMode.Position, setPosition(100));
 				}
 				
@@ -110,16 +122,9 @@ public class ClawRotation extends SubsystemFramework{
 					newState = ClawRotationState.Stop;
 				}
 	break;		
-			case ScalePosition:
-				if(Elevator.testSafePosition(Constants.Safe_Position)) {					
-					clawRotationMotor.set(ControlMode.Position, setPosition(100));
-				}
-				
-				if(Hardware.operatorPad.getRawButton(Constants.Button1)) {
-					newState = ClawRotationState.Stop;
-				}
-	break;
 			case HighScalePosition:
+				SmartDashboard.putString("State", "High");
+				
 				if(Elevator.testSafePosition(Constants.Safe_Position)) {	
 					clawRotationMotor.set(ControlMode.Position, setPosition(133));
 				}
@@ -130,7 +135,7 @@ public class ClawRotation extends SubsystemFramework{
 	break;		
 		
 			default:
-				newState = ClawRotationState.Stop;
+				newState = ClawRotationState.StowPosition;
 			break;
 		}
 		

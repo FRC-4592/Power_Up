@@ -113,10 +113,6 @@ public class Drivetrain extends SubsystemFramework {
 		goal_Ticks_Error = (goal_Ticks - getPosition());
 		goal_Angle_Error = goal_Angle + MXP.getAngle();
 		
-		SmartDashboard.putNumber("Goal Ticks", goal_Ticks);
-		SmartDashboard.putNumber("Goal Ticks Error", goal_Ticks_Error);
-		SmartDashboard.putNumber("P Value", Drive_PI.getControlledOutputP(goal_Ticks_Error, 0.75));
-		
 		if(goal_Ticks_Error < 450 && goal_Ticks_Error > -450) {
 			goal_Ticks_Error = 0;
 		}
@@ -129,10 +125,6 @@ public class Drivetrain extends SubsystemFramework {
 	public void autoTurn(double wantedDegree) {
 		goal_Angle = wantedDegree;
 		goal_Angle_Error = wantedDegree + MXP.getAngle();
-		
-		SmartDashboard.putNumber("Goal Angle", wantedDegree);
-		SmartDashboard.putNumber("Goal Angle Error", goal_Angle_Error);
-		SmartDashboard.putNumber("Angle P Value", Turn_Angle_PI.getOutputP(goal_Angle_Error));
 		
 		myRobot.arcadeDrive(0, Turn_Angle_PI.getOutputP(goal_Angle_Error));
 	}

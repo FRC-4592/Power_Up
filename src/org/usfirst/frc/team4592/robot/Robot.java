@@ -8,13 +8,11 @@
 package org.usfirst.frc.team4592.robot;
 
 import org.usfirst.frc.team4592.robot.Auto.AutoScale;
-import org.usfirst.frc.team4592.robot.Auto.AutoSwitch;
 import org.usfirst.frc.team4592.robot.Lib.Loop.MultiLooper;
-import org.usfirst.frc.team4592.robot.Subsystems.Climber;
 import org.usfirst.frc.team4592.robot.Subsystems.Drivetrain;
 import org.usfirst.frc.team4592.robot.Subsystems.Elevator;
 import org.usfirst.frc.team4592.robot.Subsystems.Elevator.ElevatorState;
-import org.usfirst.frc.team4592.robot.Subsystems.Wings;
+import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawPistons;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawRotation;
 import org.usfirst.frc.team4592.robot.Subsystems.ClawMech.ClawWheels;
 
@@ -31,8 +29,6 @@ public class Robot extends IterativeRobot {
 	// Loopers
 	private MultiLooper DriveLooper = new MultiLooper("DriveLooper", 1 / 200.0, false); // Drivetrain looper
 	private MultiLooper SSLooper = new MultiLooper("SSLooper", 1 / 200.0, false); // Subsystems looper
-	private MultiLooper AutoLooper = new MultiLooper("AutoLooper", 1 / 200.0, false); // Auto looper
-
 	// Subsystems
 	private Drivetrain myDrive = new Drivetrain(Hardware.rightMasterMotor, Hardware.rightSlaveMotor,
 												Hardware.rightSlaveMotor2, Hardware.leftMasterMotor, 
@@ -40,20 +36,22 @@ public class Robot extends IterativeRobot {
 												Hardware.shifter, Hardware.MXP, Constants.Average_Ticks_Per_Foot,
 												Constants.Turn_Angle_Kp, Constants.Turn_Angle_Ki, Constants.Drive_Angle_Kp,
 												Constants.Drive_Angle_Ki, Constants.Drive_Kp, Constants.Drive_Ki);
-	private ClawWheels clawWheels = new ClawWheels(Hardware.clawRightMotor, Hardware.clawLeftMotor);
+	private ClawWheels clawWheels = new ClawWheels(Hardware.clawLeftMotor);
+	private MultiLooper AutoLooper = new MultiLooper("AutoLooper", 1 / 200.0, false); // Auto looper
 	private Elevator elevator = new Elevator(Hardware.elevatorMotor, Constants.Average_Ticks_Per_Inch,
 												Constants.Elevator_Kf, Constants.Elevator_Kp, 
 												Constants.Elevator_Ki, Constants.Elevator_Kd);
 	private ClawRotation clawRotation = new ClawRotation (Hardware.clawRotationMotor, Constants.Average_Ticks_Per_Degree,
 												Constants.Claw_Rotation_Kf, Constants.Claw_Rotation_Kp,
 												Constants.Claw_Rotation_Ki, Constants.Claw_Rotation_Kd);
-	private Climber climber = new Climber(Hardware.rightClimberMotor, Hardware.rightClimberMotor2,
-											Hardware.leftClimberMotor, Hardware.leftClimberMotor2, Hardware.climberLimitSwitch);
-	private Wings wings = new Wings(Hardware.wingRelease, Hardware.climberLimitSwitch);
+	private ClawPistons clawPistons = new ClawPistons(Hardware.clawPistons);
+	/*private Climber climber = new Climber(Hardware.rightClimberMotor, Hardware.rightClimberMotor2,
+											Hardware.leftClimberMotor, Hardware.leftClimberMotor2);
+	private Wings wings = new Wings(Hardware.wingRelease);*/
 	
 	
 	//Auto
-	private AutoSwitch autoSwitch = new AutoSwitch(myDrive, elevator, clawWheels);
+	//private AutoSwitch autoSwitch = new AutoSwitch(myDrive, elevator, clawWheels);
 	private AutoScale autoScale = new AutoScale(myDrive, elevator, clawWheels);
 	
 	/**
@@ -68,15 +66,16 @@ public class Robot extends IterativeRobot {
 		
 		DriveLooper.addLoopable(myDrive);
 		
-		SSLooper.addLoopable(clawWheels);
 		SSLooper.addLoopable(elevator);
+		SSLooper.addLoopable(clawWheels);
 		SSLooper.addLoopable(clawRotation);
-		SSLooper.addLoopable(climber);
-		SSLooper.addLoopable(wings); 
+		SSLooper.addLoopable(clawPistons);
+		//SSLooper.addLoopable(climber);
+		//SSLooper.addLoopable(wings); 
 		
 		
-		AutoLooper.addLoopable(autoSwitch);
-		//AutoLooper.addLoopable(autoScale);
+		//AutoLooper.addLoopable(autoSwitch);
+		AutoLooper.addLoopable(autoScale);
 	}
 
 	/**
@@ -93,8 +92,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autoSwitch.getGameData();
-		//autoScale.getGameData();
+		//autoSwitch.getGameData();
+		autoScale.getGameData();
 		AutoLooper.start();
 		AutoLooper.update();
 		SSLooper.start();
@@ -106,7 +105,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		myDrive.outputToSmartDashboard();
+		//myDrive.outputToSmartDashboard();
 	}
 
 	public void teleopInit() {

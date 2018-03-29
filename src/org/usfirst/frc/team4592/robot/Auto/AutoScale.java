@@ -27,39 +27,46 @@ public class AutoScale extends AutoFramework{
 		}
 		
 		if(gameData.charAt(1) == 'L') {
+			//Create PID loop for auto scale to fix turn
 			if(counter >= 505 && counter <= 605) {
 				myDrive.autoTurn(90);
 			}else if(counter >= 606 && counter <= 610) {
 				myDrive.zeroSensors();
-			}else if(counter >= 615 && counter <= 1500) {
-				myDrive.autoDriveStraight(18);
-			}else if(counter >= 1505 && counter <= 1605) {
+			//Drive more
+			}else if(counter >= 615 && counter <= 2000) {
+				myDrive.autoDriveStraight(25);
+			}else if(counter >= 2005 && counter <= 2105) {
 				myDrive.autoTurn(0);
-			}else if(counter >= 1606 && counter <= 1610) {
+			}else if(counter >= 2106 && counter <= 2110) {
 				myDrive.zeroSensors();
-			}else if(counter >= 1615 && counter <= 1755) {
+			}else if(counter >= 2115 && counter <= 2155) {
 				myDrive.autoDriveStraight(3);
-			}else if(counter >= 1760 && counter <= 2605) {
+			}else if(counter >= 2160 && counter <= 2610) {
 				elevator.state = ElevatorState.AutoScalePosition;
-			}else if(counter >= 2610) {
+			}else if(counter >= 2615 && counter <= 2715) {
+				//make sure it spits out
 					clawWheels.state = ClawWheelsState.Spit;
-			}/*else if(counter >= 2715) {
+			}else if(counter >= 2720) {
 				clawWheels.state = ClawWheelsState.Off;
-			}*/
+			}
 		}else if(gameData.charAt(1) == 'R') {
-			if(counter >= 505 && counter <= 800) {
-				myDrive.autoDriveStraight(23.53);
-			}else if(counter >= 805 && counter <= 1725) {
-				myDrive.autoTurn(90);
+			//Drive less
+			if(counter >= 505 && counter <= 725) {
+				myDrive.autoDriveStraight(20);
+			//Turn less may 45.92 or 60
+			}else if(counter >= 730 && counter <= 1200) {
+				myDrive.autoTurn(60);
 				
-				if(counter >= 855 && counter <= 1700) {
+				if(counter >= 750) {
 					elevator.state = ElevatorState.AutoScalePosition;
 				}
-			}else if(counter >= 1705) {
+			}else if(counter >= 1205  && counter <= 1305) {
 				clawWheels.state = ClawWheelsState.Spit;
+			}else if(counter >= 1310) {
+				clawWheels.state = ClawWheelsState.Off;
 			}
-		}else {
-			
+		}else{
+			//If not data is received do nothing
 		}
 		
 		counter++;

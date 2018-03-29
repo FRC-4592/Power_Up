@@ -29,6 +29,10 @@ public class Hardware {
 	public static final WPI_VictorSPX leftSlaveMotor2 = 
 			new WPI_VictorSPX(Constants.LEFT_SLAVE_MOTOR_2_CAN);
 	
+	//Shifter
+	public static final doubleSolenoid shifter = 
+			new doubleSolenoid(Constants.SHIFTER_OPEN, Constants.SHIFTER_CLOSE);
+	
 	//Elevator
 	public static final TalonSRX elevatorMotor = 
 			new TalonSRX(Constants.ELEVATOR_MOTOR_CAN);
@@ -53,20 +57,16 @@ public class Hardware {
 	public static final VictorSPX leftClimberMotor2 =
 			new VictorSPX(Constants.LEFT_CLIMBER_MOTOR_2_CAN);
 	
-	//Climber Sensor
-	public static final DigitalInput climberLimitSwitch =
-			new DigitalInput(Constants.CLIMBER_LIMIT_SWITCH);
+	//Wings
+	public static final doubleSolenoid wingRelease =
+			new doubleSolenoid(Constants.WING_OPEN, Constants.WING_CLOSE);
 	
+	//Claw Pneumatics
+	public static final doubleSolenoid clawPistons =
+			new doubleSolenoid(Constants.CLAW_OPEN, Constants.CLAW_CLOSE);
+			
 	//Gyro
 	public static final AHRS MXP = new AHRS(Constants.MXP_PORT); 
-		
-	//Shifter
-		public static final doubleSolenoid shifter = 
-				new doubleSolenoid(Constants.SHIFTER_OPEN, Constants.SHIFTER_CLOSE);
-		
-	//Wings
-		public static final doubleSolenoid wingRelease =
-				new doubleSolenoid(Constants.WING_OPEN, Constants.WING_CLOSE);
 		
 		//Sticks
 		public static final Joystick driverPad = 

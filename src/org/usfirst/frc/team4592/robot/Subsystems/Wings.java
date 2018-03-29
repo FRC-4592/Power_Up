@@ -25,6 +25,10 @@ public class Wings extends SubsystemFramework{
 		this.climberLimitSwitch = climberLimitSwitch;
 	}
 	
+	public Wings(doubleSolenoid wingRelease) {
+		this.wingRelease = wingRelease;
+	}
+	
 	public enum WingsState{
 		Loaded, Released;
 	}

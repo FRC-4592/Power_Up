@@ -28,6 +28,14 @@ public class Climber extends SubsystemFramework {
 		
 		this.climberLimitSwitch = climberLimitSwitch;
 	}
+	
+	public Climber(VictorSPX rightClimberMotor, VictorSPX rightClimberMotor2, 
+			VictorSPX leftClimberMotor,	VictorSPX leftClimberMotor2) {
+		this.rightClimberMotor = rightClimberMotor;
+		this.rightClimberMotor2 = rightClimberMotor2;
+		this.leftClimberMotor = leftClimberMotor;
+		this.leftClimberMotor2 = leftClimberMotor2;
+	}
 
 	public enum ClimberState {
 		Off, Climb;
@@ -51,16 +59,16 @@ public class Climber extends SubsystemFramework {
 
 		case Climb:
 			// Comp Bot
-			rightClimberMotor.set(ControlMode.PercentOutput, -1);
-			rightClimberMotor2.set(ControlMode.PercentOutput, 1);
-			leftClimberMotor.set(ControlMode.PercentOutput, -1);
-			leftClimberMotor2.set(ControlMode.PercentOutput, 1);
+			//rightClimberMotor.set(ControlMode.PercentOutput, -1);
+			//rightClimberMotor2.set(ControlMode.PercentOutput, 1);
+			//leftClimberMotor.set(ControlMode.PercentOutput, -1);
+			//leftClimberMotor2.set(ControlMode.PercentOutput, 1);
 			
 			// Practice Bot
-			//rightClimberMotor.set(ControlMode.PercentOutput, 0.75);
-			//rightClimberMotor2.set(ControlMode.PercentOutput, -0.75);
-			//leftClimberMotor.set(ControlMode.PercentOutput, -0.75);
-			//leftClimberMotor2.set(ControlMode.PercentOutput, -0.75);
+			rightClimberMotor.set(ControlMode.PercentOutput, 0.75);
+			rightClimberMotor2.set(ControlMode.PercentOutput, -0.75);
+			leftClimberMotor.set(ControlMode.PercentOutput, -0.75);
+			leftClimberMotor2.set(ControlMode.PercentOutput, -0.75);
 
 			if (Hardware.driverPad.getRawButtonReleased(Constants.CLIMB)) {
 				newState = ClimberState.Off;

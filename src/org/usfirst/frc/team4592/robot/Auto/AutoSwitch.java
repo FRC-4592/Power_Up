@@ -22,6 +22,7 @@ public class AutoSwitch extends AutoFramework{
 	
 	@Override
 	public void update() {
+		//Decrease time should be able to take out about a second
 		if(counter >= 0 && counter <= 275) {
 			myDrive.autoDriveStraight(2);
 		}
@@ -38,8 +39,10 @@ public class AutoSwitch extends AutoFramework{
 				myDrive.autoTurn(0);
 			}else if(counter >= 1001 && counter <= 1005) {
 				myDrive.zeroSensors();
+			//May need to tune how far it drives
 			}else if(counter >= 1010 && counter <= 1400) {
 				myDrive.autoDriveStraight(3.5);
+			//Test Spit time
 			}else if(counter >= 1405 && counter <= 1465) {
 				clawWheels.state = ClawWheelsState.Spit;
 			}else if(counter >= 1470) {
@@ -57,27 +60,30 @@ public class AutoSwitch extends AutoFramework{
 				myDrive.autoTurn(0);
 			}else if(counter >= 951 && counter <= 955) {
 				myDrive.zeroSensors();
+			//May need to tune how far it drives 
 			}else if(counter >= 960 && counter <= 1450) {
 				myDrive.autoDriveStraight(3.75);
+			//Spit out sooner
 			}else if(counter >= 1455 && counter <= 1515) {
 				clawWheels.state = ClawWheelsState.Spit;
 			}else if(counter >= 1520) {
 				clawWheels.state = ClawWheelsState.Off;
 			}
 		}else{
+			//If no data is received cross the auto line on the left side
 			if(counter >= 280 && counter <= 400) {
 				myDrive.autoTurn(60);
 			}else if(counter >= 401 && counter <= 405) {
 				myDrive.zeroSensors();
-			}else if(counter >= 410 && counter <= 750) {
-				myDrive.autoDriveStraight(4.5);
-			}else if(counter >= 755 && counter <= 950) {
-				elevator.state = ElevatorState.SwitchPosition;
+			}else if(counter >= 410 && counter <= 800) {
+				myDrive.autoDriveStraight(5);
+			}else if(counter >= 805 && counter <= 1000) {
 				myDrive.autoTurn(0);
-			}else if(counter >= 951 && counter <= 955) {
+			}else if(counter >= 1001 && counter <= 1005) {
 				myDrive.zeroSensors();
-			}else if(counter >= 960 && counter <= 1260) {
-				myDrive.autoDriveStraight(3);
+			//May need to tune how far it drives
+			}else if(counter >= 1010 && counter <= 1400) {
+				myDrive.autoDriveStraight(3.5);
 			}
 		}
 		

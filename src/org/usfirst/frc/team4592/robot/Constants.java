@@ -30,6 +30,10 @@ public class Constants {
 	public static final int RIGHT_CLAW_WHEEL_MOTOR_PWM = 8;
 	public static final int LEFT_CLAW_WHEEL_MOTOR_PWM = 9;
 	
+	//Claw Pneumatics
+	public static final int CLAW_OPEN = 5;
+	public static final int CLAW_CLOSE = 4;
+	
 	//Climber
 	public static final int RIGHT_CLIMBER_MOTOR_CAN = 5;
 	public static final int RIGHT_CLIMBER_MOTOR_2_CAN = 4;
@@ -45,6 +49,7 @@ public class Constants {
 	
 	//Gyro
 	public static final Port MXP_PORT = SPI.Port.kMXP;
+	
 	//Stick USB Values
 	public static final int DRIVE_USB_PORT = 0;
 	public static final int OPERATOR_USB_PORT = 1;
@@ -57,14 +62,16 @@ public class Constants {
 		//Elevator Buttons
 		public static final int INTAKE = 3;
 		public static final int SWITCH = 4;
-		public static final int SCALE = 5;
 		public static final int HIGH_SCALE = 6;
 		public static final int CLIMB_UP = 7;
 		public static final int CLIMB_DOWN = 8;
 		
-		//Claw Buttons
+		//Claw Wheels Buttons
 		public static final int CLAW_INTAKE = 3;
 		public static final int CLAW_SPIT = 2;
+		
+		//Claw Piston Buttons
+		public static final int CLAW_PISTON = 5;
 		
 		//Wing Buttons
 		public static final int WING_DEPLOY = 9;
@@ -89,7 +96,8 @@ public class Constants {
 		public static final int Button16 = 16;
 		
 	//Elevator PID Values
-		public static final double Average_Ticks_Per_Inch = -1052.22;
+		//Need to re-tune average_ticks_per_inch due to the new gear ratio  
+		public static final double Average_Ticks_Per_Inch = 895.71429;
 		public static final double Elevator_Kf = 0;
 		public static final double Elevator_Kp = 1.1;
 		public static final double Elevator_Ki = 0;
